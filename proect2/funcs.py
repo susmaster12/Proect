@@ -13,9 +13,8 @@ logger = logging.getLogger(__name__)
 DATABASE = 'baze.db'
 UPLOAD_FOLDER = 'static/avatars'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'mp3', 'wav'}
-STEAM_API_KEY = "8337B627A76CD0F2447464B6F59CFCE4" # Замените на ваш API Key
+STEAM_API_KEY = "8337B627A76CD0F2447464B6F59CFCE4"
 
-# Создаем папку для аватарок, если она не существует
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
@@ -26,7 +25,7 @@ def allowed_file(filename):
 
 def get_users(sort_by='name', age_filter=None, search_query=None, game_type_filter=None, platform_filter=None, region_filter=None):
     conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row  # Возвращает результаты в виде словарей
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     query = "SELECT id, name, age, game_type, avatar, username, steam_profile_url, steam_games FROM users"  # Добавляем username
     parameters = []
@@ -44,7 +43,6 @@ def get_users(sort_by='name', age_filter=None, search_query=None, game_type_filt
         conditions.append("game_type = ?")
         parameters.append(game_type_filter)
 
-    # Добавляем фильтры по платформе и региону
     if platform_filter:
         conditions.append("platform = ?")
         parameters.append(platform_filter)
@@ -64,7 +62,7 @@ def get_users(sort_by='name', age_filter=None, search_query=None, game_type_filt
 
 def get_user_by_username(username):
     conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row  # Возвращает результаты в виде словарей
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     cursor.execute("SELECT id, name, age, game_type, avatar, username, description, steam_profile_url, steam_games FROM users WHERE username = ?",
                    (username,))
@@ -74,7 +72,7 @@ def get_user_by_username(username):
 
 def get_profile(user_id):
     conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row  # Возвращает результаты в виде словарей
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     cursor.execute("SELECT id, name, age, game_type, avatar, username, description, steam_profile_url, steam_games FROM users WHERE id = ?",
                    (user_id,))
@@ -84,7 +82,7 @@ def get_profile(user_id):
 
 def get_reviews(user_id):
     conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row  # Возвращает результаты в виде словарей
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     cursor.execute(
         "SELECT review_text, created_at, user_id, reviewer_username FROM reviews WHERE user_id = ?", (user_id,))
@@ -94,7 +92,7 @@ def get_reviews(user_id):
 
 def add_review(user_id, review_text, reviewer_username):
     conn = sqlite3.connect('baze.db')
-    conn.row_factory = sqlite3.Row  # Возвращает результаты в виде словарей
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     try:
         cursor.execute("INSERT INTO reviews (user_id, review_text, reviewer_username) VALUES (?, ?, ?)",
@@ -108,7 +106,7 @@ def add_review(user_id, review_text, reviewer_username):
 
 def edit_profile_data(user_id, new_age, new_description, new_game_type, steam_profile_url, steam_games_str):
     conn = sqlite3.connect('baze.db')
-    conn.row_factory = sqlite3.Row  # Возвращает результаты в виде словарей
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
     try:
         cursor.execute("UPDATE users SET age=?, description=?, game_type=?, steam_profile_url=?, steam_games=? WHERE id=?",
@@ -122,22 +120,18 @@ def edit_profile_data(user_id, new_age, new_description, new_game_type, steam_pr
     finally:
         conn.close()
 
-# Функция для получения списка игр пользователя из Steam
 def get_steam_games(steam_id):
-    """
-    Получает список игр пользователя Steam по его SteamID.
-    """
     if not steam_id or not STEAM_API_KEY:
         return []
 
     url = f"http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key={STEAM_API_KEY}&steamid={steam_id}&include_appinfo=1&format=json"
     try:
         response = requests.get(url)
-        response.raise_for_status()  # Проверка на ошибки HTTP
+        response.raise_for_status()
         data = response.json()
         if 'response' in data and 'games' in data['response']:
             games = data['response']['games']
-            return games  # Возвращаем список игр
+            return games
         else:
             return []
     except requests.exceptions.RequestException as e:
