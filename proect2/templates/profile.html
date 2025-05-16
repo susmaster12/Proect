@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Профиль {{ user.name }}{% endblock %}
+
+{% block content %}
+<h1>Профиль {{ user.name }}</h1>
+<img src="{{ user.avatar }}" alt="Аватарка" style="width: 100px; height: 100px;"><br><br>
+<p>Возраст: {{ user.age }}</p>
+<p>Тип игры: {{ user.game_type }}</p>
+<p>Описание: {{ user.description }}</p>
+
+{% if user.steam_profile_url %}
+<p>Ссылка на профиль Steam: <a href="{{ user.steam_profile_url }}" target="_blank">{{ user.steam_profile_url }}</a></p>
+{% endif %}
+
+{% if steam_games %}
+<h2>Игры в Steam:</h2>
+<table border="1">
+    <thead>
+    <tr>
+        <th>Название игры</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for game in steam_games %}
+    <tr>
+        <td>{{ game.get('name', 'Название не найдено') }}</td>
+        <td>{{ game.get('appid', 'ID не найден') }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+<h2>Отзывы</h2>
+<ul>
+    {% for review in reviews %}
+    <li>{{ review.reviewer_username }}: {{ review.review_text }} ({{ review.created_at }})</li>
+    {% endfor %}
+</ul>
+
+{% if logged_in %}
+<form method="post" action="{{ url_for('add_review_route', user_id=user.id) }}">
+    <label for="review">Добавить отзыв:</label><br>
+    <textarea name="review" required></textarea><br>
+    <button type="submit">Отправить отзыв</button>
+</form>
+{% endif %}
+
+{% if logged_in and session.username == user.username %}
+<a href="{{ url_for('edit_profile') }}">Редактировать профиль</a>
+{% endif %}
+{% endblock %}

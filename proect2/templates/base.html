@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Team Finder{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body style="background-color: #001f3f; color: white; font-family: sans-serif;">
+    <header style="background-color: #000000; padding: 10px; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <a href="{{ url_for('index') }}" style="color: white; text-decoration: none; font-size: 1.5em;">Team Finder</a>
+            <div>
+                {% if logged_in %}
+                    <span>Привет, {{ session.username }}!</span>
+                    <a href="{{ url_for('edit_profile') }}" style="color: white; text-decoration: none; margin-left: 10px;">Редактировать профиль</a>
+                    <a href="{{ url_for('logout') }}" style="color: white; text-decoration: none; margin-left: 10px;">Выйти</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" style="color: white; text-decoration: none; margin-left: 10px;">Войти</a>
+                    <a href="{{ url_for('register') }}" style="color: white; text-decoration: none; margin-left: 10px;">Зарегистрироваться</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+    <div class="content" style="padding: 20px;">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

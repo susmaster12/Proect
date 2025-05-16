@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Список тиммейтов{% endblock %}
+
+{% block content %}
+<h1>Список тиммейтов</h1>
+
+<form method="get" action="{{ url_for('index') }}" style="margin-bottom: 20px;">
+    <label for="age">Фильтр по возрасту:</label>
+    <input type="number" name="age" value="{{ age_filter or '' }}" placeholder="Введите минимальный возраст">
+    <button type="submit">Применить</button>
+    <a href="{{ url_for('index') }}" style="margin-left: 10px;" class="button">Сбросить фильтры</a>
+</form>
+
+<form method="get" action="{{ url_for('index') }}" style="margin-bottom: 20px;">
+    <label for="search">Поиск по имени:</label>
+    <input type="text" name="search" value="{{ search_query or '' }}" placeholder="Введите имя">
+    <button type="submit">Найти</button>
+</form>
+
+<form method="get" action="{{ url_for('index') }}" style="margin-bottom: 20px;">
+    <label for="game_type">Фильтр по типу игры:</label>
+    <select name="game_type">
+        <option value="">Все</option>
+        <option value="Шутеры" {% if game_type_filter==
+        'Шутеры' %}selected{% endif %}>Шутеры</option>
+        <option value="RTS" {% if game_type_filter==
+        'RTS' %}selected{% endif %}>RTS</option>
+        <option value="Хоррор" {% if game_type_filter==
+        'Хоррор' %}selected{% endif %}>Хоррор</option>
+        <option value="Action" {% if game_type_filter==
+        'Action' %}selected{% endif %}>Action</option>
+        <option value="Симулятор" {% if game_type_filter==
+        'Симулятор' %}selected{% endif %}>Симулятор</option>
+        <option value="Файтинг" {% if game_type_filter==
+        'Файтинг' %}selected{% endif %}>Файтинг</option>
+        <option value="Платформер" {% if game_type_filter==
+        'Платформер' %}selected{% endif %}>Платформер</option>
+        <option value="Глобальные стратегии" {% if game_type_filter==
+        'Глобальные стратегии' %}selected{% endif %}>Глобальные стратегии</option>
+        <option value="Wargames" {% if game_type_filter==
+        'Wargames' %}selected{% endif %}>Wargames</option>
+        <option value="RPG" {% if game_type_filter==
+        'RPG' %}selected{% endif %}>RPG</option>
+        <option value="MMORPG" {% if game_type_filter==
+        'MMORPG' %}selected{% endif %}>MMORPG</option>
+    </select>
+    <button type="submit">Применить</button>
+</form>
+
+<p>Найдено записей: {{ users|length }}</p>
+
+<table width="50%" border="1" cellpadding="10">
+    <tr>
+        <th><a href="{{ url_for('index', sort='name') }}" style="color: white; text-decoration: none;">Имя</a></th>
+        <th><a href="{{ url_for('index', sort='age') }}" style="color: white; text-decoration: none;">Возраст</a></th>
+        <th><a href="{{ url_for('index', sort='game_type') }}" style="color: white; text-decoration: none;">Тип игры</a>
+        </th>
+        <th>Аватарка</th>
+    </tr>
+    {% for user in users %}
+    <tr>
+        <td><a href="{{ url_for('profile', username=user.username) }}" style="color: white; text-decoration: none;">{{
+            user.name }}</a></td>
+        <td>{{ user.age }}</td>
+        <td>{{ user.game_type }}</td>
+        <td><img src="{{ user.avatar }}" alt="Аватарка" style="width: 50px; height: 50px;"></td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
