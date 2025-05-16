@@ -200,5 +200,4 @@ def edit_profile():
 
 
 if __name__ == '__main__':
-    # init_db()  # Инициализируем базу данных при запуске
     app.run(debug=True)
